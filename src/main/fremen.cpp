@@ -30,7 +30,7 @@ int main(int argc,char *argv[])
 		trainingLength++;
 	}
 	fclose(file);
-	printf("READ %i\n",trainingLength);
+	//printf("READ %i\n",trainingLength);
 	/*traning model*/
 	CFFTPlan plan;
 	plan.prepare(trainingLength);
@@ -47,7 +47,7 @@ int main(int argc,char *argv[])
 	}
 	fclose(file);
 
-	file=fopen("predictions.txt","w");
+	file=fopen("tmp/predictions.txt","w");
 	for (int i =0;i<testingLength;i++) fprintf(file,"%.3f\n",predictions[i]);
 	fclose(file);
 	return 0;
