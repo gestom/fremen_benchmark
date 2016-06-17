@@ -20,7 +20,6 @@ int dummyTime = 0;
 int main(int argc,char *argv[])
 {
 	/*read training data*/
-	int dummy = 0;
 	FILE* file=fopen(argv[1],"r");
 	while (feof(file)==0)
 	{
@@ -30,7 +29,7 @@ int main(int argc,char *argv[])
 		trainingLength++;
 	}
 	fclose(file);
-	//printf("READ %i\n",trainingLength);
+
 	/*traning model*/
 	CFFTPlan plan;
 	plan.prepare(trainingLength);
