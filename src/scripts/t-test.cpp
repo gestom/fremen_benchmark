@@ -30,6 +30,6 @@ int main(int argc, char **argv)
 	//printf("%.3lf %.3lf %.3lf\n",left,right,both);
 	if (right < 0.05) printf("better (p(worse)=%.3f)\n",right);
 	else if (left < 0.05) printf("worse (p(better)=%.3f)\n",left);
-	else printf("indecisive (p(same)=%.3f)\n",both);
+	else printf("the same (p(same)=%.3f)\n",both);
 	return 0;
 }
