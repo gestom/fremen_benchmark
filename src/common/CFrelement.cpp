@@ -352,13 +352,13 @@ int CFrelement::load(FILE* file)
 float CFrelement::estimate(int timeStamp)
 {
 	float time = (float)timeStamp/signalLength;
-	float estimate = gain-0.1;
+	float estimate = gain;
 	for (int i = 0;i<order;i++){
 		estimate+=2*frelements[i].amplitude*cos(time*frelements[i].frequency*2*M_PI+frelements[i].phase);
 	}
 	if (estimate > 1.0) return 1.0;
 	if (estimate < 0.0) return 0.0;
-	return estimate;
+	return gain;
 }
 
 float CFrelement::fineEstimate(float timeStamp)
