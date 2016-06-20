@@ -9,5 +9,5 @@ do
 	echo New method performed $(paste results/orig_$i.txt results/test_$i.txt|tr \\t ' '|cut -f 2,4 -d ' '|./scripts/t-test) on testing data $i.  >>results/summary.txt
 done
 gnuplot scripts/draw_results.gnu >results/results.fig
-fig2dev -Ljpg -m 5 results/results.fig results/results.jpg
+fig2dev -Ljpeg -m 5 results/results.fig results/results.jpg
 rm tmp/*
