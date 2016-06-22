@@ -5,7 +5,7 @@
 #include "CTimer.h"
 #define MAX_SIGNAL_LENGTH 1000000
 
-CFrelement frelement
+CFrelement frelement;
 
 int trainingTimes[MAX_SIGNAL_LENGTH];
 unsigned char trainingStates[MAX_SIGNAL_LENGTH];
