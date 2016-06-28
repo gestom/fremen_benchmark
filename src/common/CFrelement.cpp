@@ -6,7 +6,7 @@ static bool debug = false;
 float CFrelement::estimate(int timeStamp)
 {
 	float time = (float)timeStamp/signalLength;
-	float estimate = gain;
+	float estimate = gain+0.1;
 	for (int i = 0;i<order;i++){
 		estimate+=2*frelements[i].amplitude*cos(time*frelements[i].frequency*2*M_PI+frelements[i].phase);
 	}
