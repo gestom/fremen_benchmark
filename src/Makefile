@@ -1,10 +1,10 @@
 include Mk/local.Mk
 SUBDIRS+=common
+SUBDIRS+=models
 SUBDIRS+=main
 
 OBJS=$(wildcard ../obj/*.o)
 LXXLIBS+=-L/usr/local/lib
-LXXLIBS+=-lfftw3
 
 COPY_ETC_CMD=../etc/copy.sh
 COPY_ETC_SRC=../etc
