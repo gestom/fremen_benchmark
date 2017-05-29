@@ -2,21 +2,27 @@
 
 using namespace std;
 
-int calculateRate(float shape, float scale) 
+float calculateRate(float shape, float scale)
 {
-	return (shape - 1.0) / scale;
+	// return (shape - 1.0) / scale;  // For poisson MAP arrival rate
+	return (shape) / scale;
+}
+
+int copyfremenSort(const void* i,const void* j)
+{
+	 if (((SFrelement*)i)->amplitude < ((SFrelement*)j)->amplitude) return +1;
+	 return -1;
 }
 
 CFrePoisson::CFrePoisson(const char* name)
 {
 	strcpy(id,name);
-    printf("CFrePoisson");
 
 	//initialization of the frequency set
 	fremen = new CFrelement(name);
     order = 0;
     measurements = 0;
-    max_addition = 10;
+    max_addition = 2;
     max_iteration = 1000;
 	firstTime = fremen->firstTime;
 	lastTime = fremen->lastTime;
@@ -30,9 +36,9 @@ void CFrePoisson::init(int iMaxPeriod,int elements,int numActivities)
 	numElements = fremen->numElements;
 	rates = (PoissonRate*)malloc(sizeof(PoissonRate)*maxPeriod);
 	for (int i=0;i<maxPeriod;i++) {
-        rates[i].shape = 1.1;
-        rates[i].scale = 1.0; 
-        rates[i].rate = calculateRate(1.1, 1.0);
+        rates[i].shape = 0.0;    // shape should be 1.1 for Poisson
+        rates[i].scale = 0.1;
+        rates[i].rate = calculateRate(rates[i].shape, rates[i].scale);
     }
 	predictFrelements = (SFrelement*)malloc(sizeof(SFrelement)*numElements);
     for (int i=0;i<numElements;i++) predictFrelements[i].amplitude = predictFrelements[i].phase = 0; 
@@ -52,11 +58,11 @@ int CFrePoisson::add(uint32_t time,float state)
     if (firstTime == -1)
         firstTime = time;
 
-    rates[measurements % maxPeriod].shape += state;
-    rates[measurements % maxPeriod].scale += 1.0;
-    rates[measurements % maxPeriod].rate = calculateRate(
-        rates[measurements % maxPeriod].shape,  
-        rates[measurements % maxPeriod].scale
+    rates[time % maxPeriod].shape += (float)state;
+    rates[time % maxPeriod].scale += 1.0;
+    rates[time % maxPeriod].rate = calculateRate(
+        rates[time % maxPeriod].shape,
+        rates[time % maxPeriod].scale
     );
 
     lastTime = time;
@@ -70,19 +76,21 @@ void CFrePoisson::update(int modelOrder)
     // copy rates to temporary array for calculation
     float temp[maxPeriod];
     for (int i = 0; i < maxPeriod; i++)
-        temp[i] = rates[i].rate;
+        temp[i] = rates[i].shape;  // this should be rates[i].rate for Poisson arrival rate
 
     // get significant frequencies
     order = modelOrder;
-    int exit_counter = max_iteration;
+    int exit_counter = 0;
     int freq_counter = 0;
     int freq_indices [numElements][2]; // [period][numOfOccurrence]
     for (int i = 0; i < numElements; i++) {
             freq_indices[i][0] = -1;
             freq_indices[i][1] = 0;
     }
-    while (freq_counter < (order*2)){
+    while (freq_counter < (order*6)){
         // find the highest frequency
+        fremen = new CFrelement(id);
+        fremen->init(maxPeriod, numElements, freq_counter);
         for (int i = 0;i<maxPeriod;i++)
             fremen->add(i,temp[i]);
         fremen->update(1);
@@ -97,11 +105,12 @@ void CFrePoisson::update(int modelOrder)
                     bool new_added_order = true;
                     while (j < freq_counter) {
                         if (freq_indices[j][0] == predictFrelements[i].period) {
-                            if (freq_indices[j][1] <= max_addition) {
+                            if (freq_indices[j][1] < max_addition) {
                                 predictFrelements[i].amplitude += fremen->predictFrelements[0].amplitude;
-                                predictFrelements[i].phase = ((float)freq_indices[j][1] * predictFrelements[i].phase) / (float)(freq_indices[j][1] + 1);
+                                predictFrelements[i].phase = ((float)freq_indices[j][1] * predictFrelements[i].phase + fremen->predictFrelements[0].phase) / (float)(freq_indices[j][1] + 1);
                                 freq_indices[j][1] += 1;
                             }
+
                             new_added_order = false;
                         }
                         j++;
@@ -127,6 +136,7 @@ void CFrePoisson::update(int modelOrder)
         if (exit_counter >= max_iteration)
             break;
     }
+	qsort(predictFrelements,numElements,sizeof(SFrelement),copyfremenSort);
 }
 
 /*text representation of the fremen model*/
