@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <iostream>
 #include <stdio.h>
-#include "statistics.h"
+#include <statistics.h>
 
 using namespace alglib;
-
 
 int maina(int argc, char **argv)
 {

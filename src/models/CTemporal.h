@@ -19,7 +19,8 @@ typedef enum{
 	TT_PERGAM,
 	TT_MEAN,
 	TT_HISTOGRAM,
-	TT_NONE	
+	TT_NONE,
+    TT_FREPOISSON
 }ETemporalType;
 
 class CTemporal

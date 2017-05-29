@@ -2,6 +2,7 @@
 #include <fstream>	
 #include <cstdlib>	
 #include "CFrelement.h"
+#include "CFrePoisson.h"
 #include "CPerGaM.h"
 #include "CTimeAdaptiveHist.h"
 #include "CTimeHist.h"
@@ -40,6 +41,7 @@ int main(int argc,char *argv[])
 	if (argv[3][0] == 'I') temporalModel = new CTimeHist("door");
 	else if (argv[3][0] == 'A') temporalModel = new CTimeAdaptiveHist("door");
 	else if (argv[3][0] == 'F') temporalModel = new CFrelement("door");
+	else if (argv[3][0] == 'P') temporalModel = new CFrePoisson("door");
 	else if (argv[3][0] == 'M') temporalModel = new CTimeMean("door");
 	else if (argv[3][0] == 'G') temporalModel = new CPerGaM("door");
 	else temporalModel = new CTimeNone("door");
